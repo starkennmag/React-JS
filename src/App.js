@@ -2,24 +2,67 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+import ProductItem from './products-item'
+
+const products = [
+{
+  name: 'iPad',
+  price: 200
+},
+{
+  name: 'Samsung',
+  price: 5
+}
+];
+
+localStorage.setItem('products', JSON.stringify(products));
+
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+     this.state = {
+      products: []
+     };
+
+     this.onDelete = this.onDelete.bind(this);
+  }
+
+  componentWillMount(){
+      const products = this.getProducts();
+
+      this.setState({ products });
+  }
+
+  getProducts(){
+    return JSON.parse(localStorage.getItem('products'));
+  }
+
+  onDelete(name) {
+    const products = this.getProducts();
+
+    const filteredProducts = products.filter(product => {
+      return product !== name;
+    });
+    console.log(filteredProducts)
+  }
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <h1>Products Manager</h1>
+
+        {
+          this.state.products.map(product => {
+            return (
+              <ProductItem
+              key={product.name}
+              {...product}
+              onDelete={this.onDelete}
+              />
+            );
+          })
+        }
       </div>
     );
   }

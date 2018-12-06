@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 import ProductItem from './products-item'
@@ -22,7 +21,7 @@ class App extends Component {
   constructor(props) {
     super(props);
      this.state = {
-      products: []
+      products: JSON.parse(localStorage.getItem('products'))
      };
 
      this.onDelete = this.onDelete.bind(this);
@@ -35,16 +34,16 @@ class App extends Component {
   }
 
   getProducts(){
-    return JSON.parse(localStorage.getItem('products'));
-  }
+    return this.state.products  }
 
   onDelete(name) {
     const products = this.getProducts();
 
     const filteredProducts = products.filter(product => {
-      return product !== name;
+      return product.name !== name;
     });
-    console.log(filteredProducts)
+    console.log(filteredProducts);
+    this.setState({ products: filteredProducts });
   }
 
   render() {

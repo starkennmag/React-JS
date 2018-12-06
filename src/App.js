@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import ProductItem from './products-item'
+import ProductItem from './products-item';
+import AddItem from './AddItem';
 
 const products = [
 {
@@ -23,8 +24,9 @@ class App extends Component {
      this.state = {
       products: JSON.parse(localStorage.getItem('products'))
      };
-
+     this.onAdd = this.onAdd.bind(this);
      this.onDelete = this.onDelete.bind(this);
+     this.onEditSubmit = this.onEditSubmit.bind(this);
   }
 
   componentWillMount(){
@@ -36,6 +38,17 @@ class App extends Component {
   getProducts(){
     return this.state.products  }
 
+  onAdd(name, price){
+    const products = this.getProducts();
+
+    products.push({
+      name,
+      price
+    });
+
+    this.setState({ products });
+  }
+
   onDelete(name) {
     const products = this.getProducts();
 
@@ -46,10 +59,27 @@ class App extends Component {
     this.setState({ products: filteredProducts });
   }
 
+  onEditSubmit(name, price, originalName) {
+    let products = this.getProducts();
+
+    products = products.map(product => {
+      if(product.name === originalName) {
+        product.name = name;
+        product.price = price;
+      }
+      return product;
+    });
+    this.setState({ products});
+  }
+
   render() {
     return (
       <div className="App">
         <h1>Products Manager</h1>
+
+        <AddItem 
+          onAdd={this.onAdd}
+        />
 
         {
           this.state.products.map(product => {
@@ -58,6 +88,7 @@ class App extends Component {
               key={product.name}
               {...product}
               onDelete={this.onDelete}
+              onEditSubmit={this.onEditSubmit}
               />
             );
           })
